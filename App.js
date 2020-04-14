@@ -6,16 +6,41 @@ import { AsyncStorage } from 'react-native';
 
 class App extends React.Component {
 
+  id = 0;
+  arr=[]
   state = {
-    text: 'loading'
-  }
+    text: '',
+    item: [{id:1, data:"loading" }]
+  };
 
-  async storeData(){
-    await AsyncStorage.setItem('abc', 'mehedi');
-    const value = await AsyncStorage.getItem('abc')
-    console.log(value)
+  // async componentDidMount(){
+  //   const value = JSON.parse( await AsyncStorage.getItem('abc'))
+  //   console.log(value)
+  // }
+
+storeData = async () =>{
+    this.arr.push({id: this.id, data: this.state.text});
+    this.id++
+    
+    await AsyncStorage.setItem("abc", JSON.stringify(this.arr));
+    this.setState({
+      item: JSON.parse(await AsyncStorage.getItem("abc"))
+    })
+  
+    console.log(this.state)
   }
   render() {
+     if(this.state.item.length>1){
+      dataList = this.state.item.map(item=>{
+
+      return <Text>lsit: {item.id+1} {item.data}</Text>
+      })
+      
+     }
+     else{
+
+      dataList = <Text>no item</Text>
+     }
     return (
       <View style={styles.container}>
         <Appbar.Header>
@@ -32,7 +57,10 @@ class App extends React.Component {
           Save me
   </Button>
 
-        <Text>{this.state.text}</Text>
+        {/* <Text>{this.state.item[0].data}</Text> */}
+        <View>
+          {dataList}
+        </View>
       </View>
     );
   }
